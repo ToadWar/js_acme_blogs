@@ -78,3 +78,21 @@ const deleteChildElements = (parentElement) => {
     }
     return parentElement;
 }
+
+const addButtonListeners = () => {
+    const main = document.querySelector("main");
+    const buttons = main.getElementsByTagName("button");
+    
+    if (!buttons) return;
+
+    buttons.forEach((button) =>{
+        const postId = button.dataset.postId;
+        addEventListener("click", function (event) { toggleComments(event, postId) }, false);
+    });
+
+    return buttons;
+}
+
+const toggleComments = () => {
+ // TODO: later
+}
