@@ -84,7 +84,7 @@ const deleteChildElements = (parentElement) => {
 
         parentElement.removeChild(child);
 
-        child = getElementById(`${parentElement}`).lastElementChild;
+        child = parentElement.lastElementChild;
 
     }
     return parentElement;
