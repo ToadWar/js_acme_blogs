@@ -12,10 +12,8 @@ const createElemWithText = (HTMLElem = "p", textContent = "", className ) => {
  
  const createSelectOptions = (users) => {
   
-     if (!users) {
- 
-         return undefined;
- 
+     if (!users) { 
+         return ; 
      }
  
      const options = [];
@@ -32,37 +30,30 @@ const createElemWithText = (HTMLElem = "p", textContent = "", className ) => {
  const toggleCommentSection = (postID) => {
  
     if (!postID) {
-
-        return undefined;
+        return;
     }
-    const section = document.getElementById(postID);
-
+    const section = document.querySelector(`section[data-post-id = '${postID}']`);
+    
     if(!section){
 
-        return null;
+        return section;
     }
     section.classList.toggle("hide");
 
-    console.log(section);
-
     return section;
-
 }
 
 const toggleCommentButton = (postID) => {
 
-    if (!postID){
-
-        return undefined;
-
+    if (!postID){ 
+        return;
     }
 
-    const commentButton = document.getElementById(postID);
-
+    const commentButton = document.querySelector(`button[data-post-id ='${postID}']`);
+ 
     if (!commentButton){
 
         return commentButton;
-
     }
 
     commentButton.textContent = commentButton.textContent === "Show Comments" ? "Hide Comments":"Show Comments";
@@ -71,13 +62,11 @@ const toggleCommentButton = (postID) => {
 
 const deleteChildElements = (parentElement) => {
 
+    if ( !parentElement?.tagName) {
 
-    if ( typeof(parentElement) != "HTML" ) {
-
-        return undefined; 
-
+        return; 
     }
-
+    console.log('hello');
     let child = parentElement.lastElementChild;
 
     while(child) {
