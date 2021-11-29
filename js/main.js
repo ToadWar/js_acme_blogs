@@ -1,76 +1,98 @@
-
 const createElemWithText = (HTMLElem = "p", textContent = "", className ) => {
 
-   const element = document.createElement(HTMLElem);
-
-    element.textContent = textContent;
-    if (className) element.className = className;
-
-    return element;
-}
-
-const createSelectOptions = (users) => {
-    
-    if (!users) {
-        return undefined;
-    }
-    
-    const options = [];
-    for(let i = 0; i < users.length; i++) {
-    
-       options[i] = new Option( users[i].name, users[i].id);           
-
-    }
-    
-    return options;
-}
-
-const toggleCommentSection = (postID) => {
-    
+    const element = document.createElement(HTMLElem);
+ 
+     element.textContent = textContent;
+ 
+     if (className) element.className = className;
+ 
+      return element;
+ 
+ }
+ 
+ const createSelectOptions = (users) => {
+  
+     if (!users) { 
+         return ; 
+     }
+ 
+     const options = [];
+ 
+     for(let i = 0; i < users.length; i++) {
+ 
+        options[i] = new Option( users[i].name, users[i].id);           
+ 
+     }
+     return options;
+ 
+ }
+ 
+ const toggleCommentSection = (postID) => {
+ 
     if (!postID) {
-        return undefined;
+        return;
     }
-
-    const section = document.getElementById(`${postID}`);
+    const section = document.querySelector(`section[data-post-id = '${postID}']`);
+    
     if(!section){
-        return null;
+
+        return section;
     }
-
     section.classList.toggle("hide");
-    console.log(section);
-    return section;
 
+    return section;
 }
 
 const toggleCommentButton = (postID) => {
 
-    if (!postID){
-        return undefined;
+    if (!postID){ 
+        return;
     }
 
-    const commentButton = document.getElementById(`${postID}`);
+    const commentButton = document.querySelector(`button[data-post-id ='${postID}']`);
+ 
     if (!commentButton){
+
         return commentButton;
     }
 
     commentButton.textContent = commentButton.textContent === "Show Comments" ? "Hide Comments":"Show Comments";
-     
     return commentButton;
-
 }
 
 const deleteChildElements = (parentElement) => {
 
-    if ( typeof(parentElement) != "HTML" ) {
-        return undefined; 
-    }
+    if ( !parentElement?.tagName) {
 
-    let child = getElementById(`${parentElement}`).lastElementChild;
+        return; 
+    }
+    console.log('hello');
+    let child = parentElement.lastElementChild;
+
     while(child) {
+
         parentElement.removeChild(child);
-        child = getElementById(`${parentElement}`).lastElementChild;
+
+        child = parentElement.lastElementChild;
+
     }
-
     return parentElement;
+}
 
+const addButtonListeners = () => {
+    const main = document.querySelector("main");
+    const buttons = main.getElementsByTagName("button");
+    
+    if (!buttons) return;
+
+    buttons.forEach((button) =>{
+        const postId = button.dataset.postId;
+        addEventListener("click", function (event) { toggleComments(event, postId) }, false);
+    });
+
+    return buttons;
+}
+
+const toggleComments = () => {
+ // TODO: later
 }
