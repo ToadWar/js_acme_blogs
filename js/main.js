@@ -139,13 +139,21 @@ const populateSelectMenu = (users) => {
     }
 
     return selectMenu;
+}
 
+const getUsers = async () => {
+
+    try {
+        const users = await fetch("https://jsonplaceholder.typicode.com/users");
+        if (!users) throw new Error(" No data received");
+        return await users.json();
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 const toggleComments = () => {
  // TODO: later
 }
 
-const createSelectOptions = (users) => {
-    // TODO: later
-}
+
