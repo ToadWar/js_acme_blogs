@@ -127,9 +127,25 @@ const createComments = (comments) => {
     }
 
     return fragment;
+}
+
+const populateSelectMenu = (users) => {
+    if (!users) return;
+
+    const selectMenu = document.querySelector('#selectMenu');
+    const options = createSelectOptions(users);
+    for (const option of options) {
+        selectMenu.append(option);
+    }
+
+    return selectMenu;
 
 }
 
 const toggleComments = () => {
  // TODO: later
+}
+
+const createSelectOptions = (users) => {
+    // TODO: later
 }
