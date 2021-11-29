@@ -152,6 +152,18 @@ const getUsers = async () => {
     }
 }
 
+const getUserPosts = async (userId) => {
+    if(!userId) return;
+
+    try {
+        const posts = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`);
+        if (!posts) throw new Error(" No data received");
+        return await posts.json();
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 const toggleComments = () => {
  // TODO: later
 }
