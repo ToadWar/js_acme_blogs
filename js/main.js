@@ -107,6 +107,29 @@ const removeButtonListeners = () => {
     return buttons;
 }
 
+const createComments = (comments) => {
+    if (!comments) return;
+
+    let fragment = document.createDocumentFragment();
+
+    for (const comment of comments) {
+
+        const article = document.createElement('article');
+        const name = createElemWithText('h3', comment.name);
+        const paraBody = createElemWithText('p', comment.body);
+        const paraEmail = createElemWithText('p', `From: ${comment.email}`);
+
+        article.append(name);
+        article.append(paraBody);
+        article.append(paraEmail);
+        fragment.append(article);
+
+    }
+
+    return fragment;
+
+}
+
 const toggleComments = () => {
  // TODO: later
 }
