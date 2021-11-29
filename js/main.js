@@ -12,9 +12,7 @@ const createElemWithText = (HTMLElem = "p", textContent = "", className ) => {
  
  const createSelectOptions = (users) => {
   
-     if (!users) { 
-         return ; 
-     }
+     if (!users)  return ;
  
      const options = [];
  
@@ -29,15 +27,12 @@ const createElemWithText = (HTMLElem = "p", textContent = "", className ) => {
  
  const toggleCommentSection = (postID) => {
  
-    if (!postID) {
-        return;
-    }
+    if (!postID) return;
+    
     const section = document.querySelector(`section[data-post-id = '${postID}']`);
     
-    if(!section){
+    if(!section) return null;
 
-        return section;
-    }
     section.classList.toggle("hide");
 
     return section;
@@ -175,6 +170,7 @@ const getUser = async (userId) => {
         console.error(err);
     }
 }
+
 const getPostComments= async (postId) => {
     if(!postId) return;
 
@@ -187,7 +183,58 @@ const getPostComments= async (postId) => {
     }
 }
 
+const displayComments = async (postID) => {
+    if (!postID) return;
+
+    const section = document.createElement('section');
+    section.dataset.postId = postID;
+    section.classList.add("comments", "hide");
+    const comments = await getPostComments(postID);
+    const fragment = createComments(comments);
+    section.append(fragment);
+
+    return section;    
+
+}
+
+const createPosts = async (posts) => {
+
+    if (!posts) return;
+
+    const fragment = document.createDocumentFragment();
+
+    for (const post of posts) {
+
+        const article = document.createElement('article');
+        const name = createElemWithText('h2', post.title);
+        const paraBody = createElemWithText('p', post.body);
+        const paraPostId = createElemWithText('p', `Post ID: ${post.id}`);
+        const author = await getUser (post.userId);
+        const paraAuthor = createElemWithText('p', `Author: ${author.name} with ${author.company.name}`);
+        const paraPhrase = createElemWithText('p', author.company.catchPhrase);
+        console.log(paraPhrase);
+        const button = document.createElement('button');
+        button.innerHTML = 'Show Comments';
+        button.dataset.postId = post.id;
+        const section = await displayComments(post.id);
+        
+        article.append(name);
+        article.append(paraBody);
+        article.append(paraPostId);
+        article.append(paraAuthor);
+        article.append(paraPhrase);
+        article.append(button);
+        article.append(section);
+
+        fragment.append(article);
+    }
+
+    return fragment;
+}
+
+
 const toggleComments = () => {
+
  // TODO: later
 }
 
