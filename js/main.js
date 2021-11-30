@@ -93,6 +93,30 @@ const addButtonListeners = () => {
     return buttons;
 }
 
+const removeButtonListeners = () => {
+    const main = document.querySelector("main");
+    const buttons = main.getElementsByTagName("button");
+    
+    if (!buttons) return;
+
+    buttons.forEach((button) =>{
+        const postId = button.dataset.postId;
+        removeEventListener("click", function (event) { toggleComments(event, postId) }, false);
+    });
+
+    return buttons;
+}
+
+const createComments = (comments) => {
+    let fragment = document.createDocumentFragment();
+
+    comments.forEach((comment)=> {
+        
+    }
+
+}
+
+
 const toggleComments = () => {
  // TODO: later
 }
