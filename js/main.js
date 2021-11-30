@@ -61,7 +61,6 @@ const deleteChildElements = (parentElement) => {
 
         return; 
     }
-    console.log('hello');
     let child = parentElement.lastElementChild;
 
     while(child) {
@@ -76,29 +75,29 @@ const deleteChildElements = (parentElement) => {
 
 const addButtonListeners = () => {
     const main = document.querySelector("main");
-    const buttons = main.getElementsByTagName("button");
+    const buttons = main.querySelectorAll("button");
     
     if (!buttons) return;
 
     buttons.forEach((button) =>{
         const postId = button.dataset.postId;
-        addEventListener("click", function (event) { toggleComments(event, postId) }, false);
+        button.addEventListener("click", function (event) { toggleComments(event, postId) }, false);
     });
-
+    
     return buttons;
 }
 
 const removeButtonListeners = () => {
     const main = document.querySelector("main");
-    const buttons = main.getElementsByTagName("button");
+    const buttons = main.querySelectorAll("button");
     
     if (!buttons) return;
 
     buttons.forEach((button) =>{
         const postId = button.dataset.postId;
-        removeEventListener("click", function (event) { toggleComments(event, postId) }, false);
+        button.removeEventListener("click", function (event) { toggleComments(event, postId) }, false);
     });
-
+    
     return buttons;
 }
 
@@ -212,7 +211,6 @@ const createPosts = async (posts) => {
         const author = await getUser (post.userId);
         const paraAuthor = createElemWithText('p', `Author: ${author.name} with ${author.company.name}`);
         const paraPhrase = createElemWithText('p', author.company.catchPhrase);
-        console.log(paraPhrase);
         const button = document.createElement('button');
         button.innerHTML = 'Show Comments';
         button.dataset.postId = post.id;
@@ -232,10 +230,59 @@ const createPosts = async (posts) => {
     return fragment;
 }
 
+const displayPosts = async (posts) => {
 
-const toggleComments = () => {
+    const main = document.querySelector('main');
+    const cloneP = main.querySelector('.default-text');
+    
+    const element = posts ? await createPosts(posts) : cloneP.cloneNode(true);
 
- // TODO: later
+    main.append(element);
+    return element;
+
 }
 
+const toggleComments = (event, postID) => {
+    if (!event || !postID) return;
+
+    event.target.listener = true;
+    const commentAndButton = [toggleCommentSection(postID), toggleCommentButton(postID)];
+    return commentAndButton;
+    
+}
+
+const refreshPosts = async (posts) => {
+    if (!posts) return;
+    const main = document.querySelector('main');
+
+    const results =[removeButtonListeners(), deleteChildElements(main), await displayPosts(posts), addButtonListeners()];
+    return results;
+
+}
+
+const selectMenuChangeEventHandler = async (event) => {
+
+    const userId = event?.target?.value || 1;
+
+    const posts = await getUserPosts(userId);
+    const arr = [userId, posts, await refreshPosts(posts)];
+    return arr;
+
+}
+
+const initPage = async () => {
+    
+    const users = await getUsers();
+    const data = [users, populateSelectMenu(users)]
+
+    return data;
+}
+
+const initApp = () => {
+    initPage();
+    const menu = document.querySelector('#selectMenu');
+    menu.addEventListener('change', selectMenuChangeEventHandler, false);
+}
+
+document.addEventListener('DOMContentLoaded', initApp, false);
 
