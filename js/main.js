@@ -1,4 +1,4 @@
-const createElemWithText = (HTMLElem = "p", textContent = "", className ) => {
+const createElemWithText = (HTMLElem = 'p', textContent = '', className ) => {
     const element = document.createElement(HTMLElem);
  
      element.textContent = textContent;
@@ -27,7 +27,7 @@ const createElemWithText = (HTMLElem = "p", textContent = "", className ) => {
     
     if(!section) return null;
 
-    section.classList.toggle("hide");
+    section.classList.toggle('hide');
 
     return section;
 }
@@ -39,7 +39,7 @@ const toggleCommentButton = (postID) => {
  
     if (!commentButton) return commentButton;
     
-    commentButton.textContent = commentButton.textContent === "Show Comments" ? "Hide Comments":"Show Comments";
+    commentButton.textContent = commentButton.textContent === 'Show Comments' ? 'Hide Comments':'Show Comments';
     return commentButton;
 }
 
@@ -58,28 +58,28 @@ const deleteChildElements = (parentElement) => {
 }
 
 const addButtonListeners = () => {
-    const main = document.querySelector("main");
-    const buttons = main.querySelectorAll("button");
+    const main = document.querySelector('main');
+    const buttons = main.querySelectorAll('button');
     
     if (!buttons) return;
 
     buttons.forEach((button) =>{
         const postId = button.dataset.postId;
-        button.addEventListener("click", function (event) { toggleComments(event, postId) }, false);
+        button.addEventListener('click', function (event) { toggleComments(event, postId) }, false);
     });
     
     return buttons;
 }
 
 const removeButtonListeners = () => {
-    const main = document.querySelector("main");
-    const buttons = main.querySelectorAll("button");
+    const main = document.querySelector('main');
+    const buttons = main.querySelectorAll('button');
     
     if (!buttons) return;
 
     buttons.forEach((button) =>{
         const postId = button.dataset.postId;
-        button.removeEventListener("click", function (event) { toggleComments(event, postId) }, false);
+        button.removeEventListener('click', function (event) { toggleComments(event, postId) }, false);
     });
     
     return buttons;
@@ -121,8 +121,8 @@ const populateSelectMenu = (users) => {
 const getUsers = async () => {
 
     try {
-        const users = await fetch("https://jsonplaceholder.typicode.com/users");
-        if (!users) throw new Error(" No data received");
+        const users = await fetch('https://jsonplaceholder.typicode.com/users');
+        if (!users) throw new Error(' No data received');
         return await users.json();
     } catch (err) {
         console.error(err);
@@ -134,7 +134,7 @@ const getUserPosts = async (userId) => {
 
     try {
         const posts = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`);
-        if (!posts) throw new Error(" No data received");
+        if (!posts) throw new Error(' No data received');
         return await posts.json();
     } catch (err) {
         console.error(err);
@@ -146,7 +146,7 @@ const getUser = async (userId) => {
 
     try {
         const user = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}`);
-        if (!user) throw new Error(" No data received");
+        if (!user) throw new Error(' No data received');
         return await user.json();
     } catch (err) {
         console.error(err);
@@ -158,7 +158,7 @@ const getPostComments= async (postId) => {
 
     try {
         const comments = await fetch(`https://jsonplaceholder.typicode.com/comments?postId=${postId}`);
-        if (!comments) throw new Error(" No data received");
+        if (!comments) throw new Error(' No data received');
         return await comments.json();
     } catch (err) {
         console.error(err);
@@ -170,7 +170,7 @@ const displayComments = async (postID) => {
 
     const section = document.createElement('section');
     section.dataset.postId = postID;
-    section.classList.add("comments", "hide");
+    section.classList.add('comments', 'hide');
     const comments = await getPostComments(postID);
     const fragment = createComments(comments);
     section.append(fragment);
