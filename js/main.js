@@ -12,9 +12,7 @@ const createElemWithText = (HTMLElem = "p", textContent = "", className ) => {
  
  const createSelectOptions = (users) => {
   
-     if (!users) { 
-         return ; 
-     }
+     if (!users)  return ;
  
      const options = [];
  
@@ -29,15 +27,12 @@ const createElemWithText = (HTMLElem = "p", textContent = "", className ) => {
  
  const toggleCommentSection = (postID) => {
  
-    if (!postID) {
-        return;
-    }
+    if (!postID) return;
+    
     const section = document.querySelector(`section[data-post-id = '${postID}']`);
     
-    if(!section){
+    if(!section) return null;
 
-        return section;
-    }
     section.classList.toggle("hide");
 
     return section;
@@ -66,7 +61,6 @@ const deleteChildElements = (parentElement) => {
 
         return; 
     }
-    console.log('hello');
     let child = parentElement.lastElementChild;
 
     while(child) {
@@ -81,42 +75,213 @@ const deleteChildElements = (parentElement) => {
 
 const addButtonListeners = () => {
     const main = document.querySelector("main");
-    const buttons = main.getElementsByTagName("button");
+    const buttons = main.querySelectorAll("button");
     
     if (!buttons) return;
 
     buttons.forEach((button) =>{
         const postId = button.dataset.postId;
-        addEventListener("click", function (event) { toggleComments(event, postId) }, false);
+        button.addEventListener("click", function (event) { toggleComments(event, postId) }, false);
     });
-
+    
     return buttons;
 }
 
 const removeButtonListeners = () => {
     const main = document.querySelector("main");
-    const buttons = main.getElementsByTagName("button");
+    const buttons = main.querySelectorAll("button");
     
     if (!buttons) return;
 
     buttons.forEach((button) =>{
         const postId = button.dataset.postId;
-        removeEventListener("click", function (event) { toggleComments(event, postId) }, false);
+        button.removeEventListener("click", function (event) { toggleComments(event, postId) }, false);
     });
-
+    
     return buttons;
 }
 
 const createComments = (comments) => {
+    if (!comments) return;
+
     let fragment = document.createDocumentFragment();
 
-    comments.forEach((comment)=> {
-        
+    for (const comment of comments) {
+
+        const article = document.createElement('article');
+        const name = createElemWithText('h3', comment.name);
+        const paraBody = createElemWithText('p', comment.body);
+        const paraEmail = createElemWithText('p', `From: ${comment.email}`);
+
+        article.append(name);
+        article.append(paraBody);
+        article.append(paraEmail);
+        fragment.append(article);
+
     }
 
+    return fragment;
 }
 
+const populateSelectMenu = (users) => {
+    if (!users) return;
 
-const toggleComments = () => {
- // TODO: later
+    const selectMenu = document.querySelector('#selectMenu');
+    const options = createSelectOptions(users);
+    for (const option of options) {
+        selectMenu.append(option);
+    }
+
+    return selectMenu;
 }
+
+const getUsers = async () => {
+
+    try {
+        const users = await fetch("https://jsonplaceholder.typicode.com/users");
+        if (!users) throw new Error(" No data received");
+        return await users.json();
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+const getUserPosts = async (userId) => {
+    if(!userId) return;
+
+    try {
+        const posts = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`);
+        if (!posts) throw new Error(" No data received");
+        return await posts.json();
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+const getUser = async (userId) => {
+    if(!userId) return;
+
+    try {
+        const user = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}`);
+        if (!user) throw new Error(" No data received");
+        return await user.json();
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+const getPostComments= async (postId) => {
+    if(!postId) return;
+
+    try {
+        const comments = await fetch(`https://jsonplaceholder.typicode.com/comments?postId=${postId}`);
+        if (!comments) throw new Error(" No data received");
+        return await comments.json();
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+const displayComments = async (postID) => {
+    if (!postID) return;
+
+    const section = document.createElement('section');
+    section.dataset.postId = postID;
+    section.classList.add("comments", "hide");
+    const comments = await getPostComments(postID);
+    const fragment = createComments(comments);
+    section.append(fragment);
+
+    return section;    
+
+}
+
+const createPosts = async (posts) => {
+
+    if (!posts) return;
+
+    const fragment = document.createDocumentFragment();
+
+    for (const post of posts) {
+
+        const article = document.createElement('article');
+        const name = createElemWithText('h2', post.title);
+        const paraBody = createElemWithText('p', post.body);
+        const paraPostId = createElemWithText('p', `Post ID: ${post.id}`);
+        const author = await getUser (post.userId);
+        const paraAuthor = createElemWithText('p', `Author: ${author.name} with ${author.company.name}`);
+        const paraPhrase = createElemWithText('p', author.company.catchPhrase);
+        const button = document.createElement('button');
+        button.innerHTML = 'Show Comments';
+        button.dataset.postId = post.id;
+        const section = await displayComments(post.id);
+        
+        article.append(name);
+        article.append(paraBody);
+        article.append(paraPostId);
+        article.append(paraAuthor);
+        article.append(paraPhrase);
+        article.append(button);
+        article.append(section);
+
+        fragment.append(article);
+    }
+
+    return fragment;
+}
+
+const displayPosts = async (posts) => {
+
+    const main = document.querySelector('main');
+    const cloneP = main.querySelector('.default-text');
+    
+    const element = posts ? await createPosts(posts) : cloneP.cloneNode(true);
+
+    main.append(element);
+    return element;
+
+}
+
+const toggleComments = (event, postID) => {
+    if (!event || !postID) return;
+
+    event.target.listener = true;
+    const commentAndButton = [toggleCommentSection(postID), toggleCommentButton(postID)];
+    return commentAndButton;
+    
+}
+
+const refreshPosts = async (posts) => {
+    if (!posts) return;
+    const main = document.querySelector('main');
+
+    const results =[removeButtonListeners(), deleteChildElements(main), await displayPosts(posts), addButtonListeners()];
+    return results;
+
+}
+
+const selectMenuChangeEventHandler = async (event) => {
+
+    const userId = event?.target?.value || 1;
+
+    const posts = await getUserPosts(userId);
+    const arr = [userId, posts, await refreshPosts(posts)];
+    return arr;
+
+}
+
+const initPage = async () => {
+    
+    const users = await getUsers();
+    const data = [users, populateSelectMenu(users)]
+
+    return data;
+}
+
+const initApp = () => {
+    initPage();
+    const menu = document.querySelector('#selectMenu');
+    menu.addEventListener('change', selectMenuChangeEventHandler, false);
+}
+
+document.addEventListener('DOMContentLoaded', initApp, false);
