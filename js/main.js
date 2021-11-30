@@ -1,32 +1,26 @@
 const createElemWithText = (HTMLElem = "p", textContent = "", className ) => {
-
     const element = document.createElement(HTMLElem);
  
      element.textContent = textContent;
  
      if (className) element.className = className;
  
-      return element;
- 
+     return element;
  }
  
  const createSelectOptions = (users) => {
-  
      if (!users)  return ;
  
      const options = [];
  
      for(let i = 0; i < users.length; i++) {
+         options[i] = new Option( users[i].name, users[i].id);           
+      }
  
-        options[i] = new Option( users[i].name, users[i].id);           
- 
-     }
-     return options;
- 
+      return options;
  }
  
  const toggleCommentSection = (postID) => {
- 
     if (!postID) return;
     
     const section = document.querySelector(`section[data-post-id = '${postID}']`);
@@ -39,37 +33,27 @@ const createElemWithText = (HTMLElem = "p", textContent = "", className ) => {
 }
 
 const toggleCommentButton = (postID) => {
-
-    if (!postID){ 
-        return;
-    }
-
+    if (!postID) return;
+    
     const commentButton = document.querySelector(`button[data-post-id ='${postID}']`);
  
-    if (!commentButton){
-
-        return commentButton;
-    }
-
+    if (!commentButton) return commentButton;
+    
     commentButton.textContent = commentButton.textContent === "Show Comments" ? "Hide Comments":"Show Comments";
     return commentButton;
 }
 
 const deleteChildElements = (parentElement) => {
+    if ( !parentElement?.tagName) return; 
 
-    if ( !parentElement?.tagName) {
-
-        return; 
-    }
     let child = parentElement.lastElementChild;
 
     while(child) {
 
         parentElement.removeChild(child);
-
         child = parentElement.lastElementChild;
-
     }
+
     return parentElement;
 }
 
@@ -117,7 +101,6 @@ const createComments = (comments) => {
         article.append(paraBody);
         article.append(paraEmail);
         fragment.append(article);
-
     }
 
     return fragment;
@@ -193,11 +176,9 @@ const displayComments = async (postID) => {
     section.append(fragment);
 
     return section;    
-
 }
 
 const createPosts = async (posts) => {
-
     if (!posts) return;
 
     const fragment = document.createDocumentFragment();
@@ -231,15 +212,13 @@ const createPosts = async (posts) => {
 }
 
 const displayPosts = async (posts) => {
-
     const main = document.querySelector('main');
-    const cloneP = main.querySelector('.default-text');
     
-    const element = posts ? await createPosts(posts) : cloneP.cloneNode(true);
-
+    const element = posts?.length? await createPosts(posts) : createElemWithText('p', 'Select an Employee to display their posts.', 'default-text');
+   
     main.append(element);
+   
     return element;
-
 }
 
 const toggleComments = (event, postID) => {
@@ -247,8 +226,8 @@ const toggleComments = (event, postID) => {
 
     event.target.listener = true;
     const commentAndButton = [toggleCommentSection(postID), toggleCommentButton(postID)];
-    return commentAndButton;
-    
+
+    return commentAndButton; 
 }
 
 const refreshPosts = async (posts) => {
@@ -256,22 +235,20 @@ const refreshPosts = async (posts) => {
     const main = document.querySelector('main');
 
     const results =[removeButtonListeners(), deleteChildElements(main), await displayPosts(posts), addButtonListeners()];
+    
     return results;
-
 }
 
 const selectMenuChangeEventHandler = async (event) => {
-
     const userId = event?.target?.value || 1;
-
+    
     const posts = await getUserPosts(userId);
     const arr = [userId, posts, await refreshPosts(posts)];
-    return arr;
 
+    return arr;
 }
 
 const initPage = async () => {
-    
     const users = await getUsers();
     const data = [users, populateSelectMenu(users)]
 
